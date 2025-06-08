@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/26893/Desktop/ball/1v1-basic-c++
+# Install script for directory: C:/Users/26893/Desktop/1v1-basic-c++
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/26893/Desktop/ball/1v1-basic-c++/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "C:/Users/26893/Desktop/1v1-basic-c++/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/26893/Desktop/ball/1v1-basic-c++/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/26893/Desktop/1v1-basic-c++/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

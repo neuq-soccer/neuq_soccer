@@ -34,13 +34,19 @@ using namespace Adapter;
 using namespace std;
 
 int tick = 0;
-int tickBeginPental = 0;
+short tick_delay = 4;
+extern int tickBeginPenalty = 0;
+extern int tickBeginGoalKick = 0;
 BaseRobot baseRobots[5];	// 我方机器人数组
 BaseRobot oppRobots[5];	//对方机器人数组
 DataLoader dataloader;
 int race_state = -1;//处于何种定位球状态，0是开球，其他遵从JudgeType
 int race_state_trigger = -1;//哪一方触发了定位球
 void ConvertFieldToOtherSide(Field* field);
+double* cal_robot_dis(BaseRobot robot1, double ballx, double bally);
+Vector2 BallPos[100000] = { {0,0} };
+bool resetHistoryRecord = false;
+bool newMatch = false;
 
 /**
 * 打印比赛状态
@@ -264,10 +270,30 @@ void GetPlacement(Field* field) {
 
 
 // 策略行为主函数，可将以下函数用策略模式封装
-void strategy(double footBallNow_X, double footBallNow_Y)
+void strategy(Field* field)
 {
-	baseRobots[0].Move_GoTar(-footBallNow_X, -footBallNow_Y);
-	//baseRobots[0].Move_GoTar(20, 20);
+	double footBallNow_X = field->ball.position.x;
+	double footBallNow_Y = field->ball.position.y;
+	// 预测足球位置
+	double futureBallx = 4 * footBallNow_X - 3 * BallPos[tick - 1].x;
+	double futureBally = 4 * footBallNow_Y - 3 * BallPos[tick - 1].y;
+
+	double* my_dis = cal_robot_dis(baseRobots[0], futureBallx, futureBally);
+	double* opp_dis = cal_robot_dis(oppRobots[0], futureBallx, futureBally);
+	if (my_dis[2] < opp_dis[2])
+	{
+		baseRobots[0].shoot_with_angle(-110, 0, baseRobots[0].PredictInformation[tick_delay].position.x, baseRobots[0].PredictInformation[tick_delay].position.y, footBallNow_X, footBallNow_Y);
+	}
+	else
+	{
+		baseRobots[0].shoot(futureBallx, futureBally);
+	}
+	delete[]my_dis;
+	delete[]opp_dis;
+
+	//baseRobots[0].Move_Go(footBallNow_X, footBallNow_Y);
+	//baseRobots[0].Move_Go(20, 20);
+	//baseRobots[0].moveto_within_x_limits(80, footBallNow_X, footBallNow_Y);
 	//存储信息
 	for (int i = 0; i < 5; i++)
 	{
@@ -293,11 +319,27 @@ void GetInstruction(Field* field) {
 
 	double footBallNow_X = field->ball.position.x;
 	double footBallNow_Y = field->ball.position.y;
+	BallPos[tick] = { float(footBallNow_X), float(footBallNow_Y) };	// 记录球的位置
 
-	strategy(footBallNow_X, footBallNow_Y);	// 执行策略
+	strategy(field);	// 执行策略
+	bool test_method = 0;
+
 	//baseRobots[0].moveTo(footBallNow_X, footBallNow_Y);
 	dataloader.set_tick_state(tick, race_state);
 }
+
+// 球距离计算函数(基于预测)
+double* cal_robot_dis(BaseRobot robot1, double ballx, double bally)
+{
+	double* ds = new double[3];
+	double	dx = robot1.PredictInformation[tick_delay].position.x - ballx;
+	double	dy = robot1.PredictInformation[tick_delay].position.y - bally;
+	ds[0] = dx;
+	ds[1] = dy;
+	ds[2] = sqrt(pow(dx, 2) + pow(dy, 2));
+	return ds;
+}
+
 
 /**
  * @brief 将作为传入的数据转换为另一方视角
@@ -305,16 +347,16 @@ void GetInstruction(Field* field) {
  * @param field 赛场数据
  */
 void ConvertFieldToOtherSide(Field* field) {
-	field->ball.position.x *= -1;
-	field->ball.position.y *= -1;
-	for (int i = 0; i < PLAYERS_PER_SIDE; i++)
-	{
+	//field->ball.position.x *= -1;
+	//field->ball.position.y *= -1;
+	//for (int i = 0; i < PLAYERS_PER_SIDE; i++)
+	//{
 
-		field->opponentRobots[i].position.x *= -1;
-		field->opponentRobots[i].position.y *= -1;
-		field->opponentRobots[i].rotation = field->opponentRobots[i].rotation > 0 ? -180 + field->opponentRobots[i].rotation : 180 + field->opponentRobots[i].rotation;
-		field->selfRobots[i].position.x *= -1;
-		field->selfRobots[i].position.y *= -1;
-		field->selfRobots[i].rotation = field->selfRobots[i].rotation > 0 ? -180 + field->selfRobots[i].rotation : 180 + field->selfRobots[i].rotation;
-	}
+	//	field->opponentRobots[i].position.x *= -1;
+	//	field->opponentRobots[i].position.y *= -1;
+	//	field->opponentRobots[i].rotation = field->opponentRobots[i].rotation > 0 ? -180 + field->opponentRobots[i].rotation : 180 + field->opponentRobots[i].rotation;
+	//	field->selfRobots[i].position.x *= -1;
+	//	field->selfRobots[i].position.y *= -1;
+	//	field->selfRobots[i].rotation = field->selfRobots[i].rotation > 0 ? -180 + field->selfRobots[i].rotation : 180 + field->selfRobots[i].rotation;
+	//}
 }
