@@ -1,0 +1,3 @@
+C:/Users/26893/Desktop/1v1-basic-c++/out/build/x64-Debug/CMakeFiles/P5v5ARL.dir
+C:/Users/26893/Desktop/1v1-basic-c++/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/26893/Desktop/1v1-basic-c++/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
