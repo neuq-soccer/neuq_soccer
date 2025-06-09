@@ -43,7 +43,7 @@ DataLoader dataloader;
 int race_state = -1;//处于何种定位球状态，0是开球，其他遵从JudgeType
 int race_state_trigger = -1;//哪一方触发了定位球
 void ConvertFieldToOtherSide(Field* field);
-double* cal_robot_dis(BaseRobot robot1, double ballx, double bally);
+double* cal_robot_dis(BaseRobot *robot1, double ballx, double bally);
 Vector2 BallPos[100000] = { {0,0} };
 bool resetHistoryRecord = false;
 bool newMatch = false;
@@ -278,8 +278,8 @@ void strategy(Field* field)
 	double futureBallx = 4 * footBallNow_X - 3 * BallPos[tick - 1].x;
 	double futureBally = 4 * footBallNow_Y - 3 * BallPos[tick - 1].y;
 
-	double* my_dis = cal_robot_dis(baseRobots[0], futureBallx, futureBally);
-	double* opp_dis = cal_robot_dis(oppRobots[0], futureBallx, futureBally);
+	double* my_dis = cal_robot_dis(&baseRobots[0], futureBallx, futureBally);
+	double* opp_dis = cal_robot_dis(&oppRobots[0], futureBallx, futureBally);
 	if (my_dis[2] < opp_dis[2])
 	{
 		baseRobots[0].shoot_with_angle(-110, 0, baseRobots[0].PredictInformation[tick_delay].position.x, baseRobots[0].PredictInformation[tick_delay].position.y, footBallNow_X, footBallNow_Y);
@@ -329,11 +329,11 @@ void GetInstruction(Field* field) {
 }
 
 // 球距离计算函数(基于预测)
-double* cal_robot_dis(BaseRobot robot1, double ballx, double bally)
+double* cal_robot_dis(BaseRobot *robot1, double ballx, double bally)
 {
 	double* ds = new double[3];
-	double	dx = robot1.PredictInformation[tick_delay].position.x - ballx;
-	double	dy = robot1.PredictInformation[tick_delay].position.y - bally;
+	double	dx = robot1->PredictInformation[tick_delay].position.x - ballx;
+	double	dy = robot1->PredictInformation[tick_delay].position.y - bally;
 	ds[0] = dx;
 	ds[1] = dy;
 	ds[2] = sqrt(pow(dx, 2) + pow(dy, 2));
