@@ -102,16 +102,16 @@ void GetPlacement(Field* field) {
 			robots[0].position.x = 0;
 			robots[0].position.y = 15;
 			robots[0].rotation = -90;
-			robots[1].position.x = 42;
-			robots[1].position.y = 42;
+			robots[1].position.x = 80;
+			robots[1].position.y = 80;
 			robots[1].rotation = 180;
-			robots[2].position.x = -30;
+			robots[2].position.x = 30;
 			robots[2].position.y = -10;
 			robots[2].rotation = 0;
-			robots[3].position.x = -50;
+			robots[3].position.x = 50;
 			robots[3].position.y = 10;
 			robots[3].rotation = 0;
-			robots[4].position.x = -80;
+			robots[4].position.x = 80;
 			robots[4].position.y = 0;
 			robots[4].rotation = 0;
 		}
@@ -269,21 +269,21 @@ void GetPlacement(Field* field) {
 }
 
 
-// 策略行为主函数，可将以下函数用策略模式封装
+// 策略行为主函数默认执行，可将以下函数用策略模式封装
 void strategy_common(Field* field)
 {
 	double footBallNow_X = field->ball.position.x;
 	double footBallNow_Y = field->ball.position.y;
 	// 预测足球位置
-	double futureBallx = 4 * footBallNow_X - 3 * BallPos[tick - 1].x;
-	double futureBally = 4 * footBallNow_Y - 3 * BallPos[tick - 1].y;
+	double futureBallx = 2 * footBallNow_X - 1 * BallPos[tick - 1].x;
+	double futureBally = 2 * footBallNow_Y - 1 * BallPos[tick - 1].y;
     
 	// 假设蓝方，给三个机器人限制活动范围
 	BaseRobot& defender1 = baseRobots[3];	// 绿色 中场
-	defender1.keepYPushBall(-90, 5, futureBallx, futureBally);	// 3号机器人x不超过5的情况下追球（中场）
+	defender1.keepYPushBall(30, 60, futureBallx, futureBally);	// 3号机器人x不超过5的情况下追球（中场） 
 
 	BaseRobot& defender2 = baseRobots[2];	// 紫色 后卫
-	defender2.keepYPushBall(-90, -12, futureBallx, futureBally);	// 2号机器人x不超过-12的情况下追球（后卫）
+	defender2.keepYPushBall(55, -70, futureBallx, futureBally);	// 2号机器人x不超过-12的情况下追球（后卫）
 
 	BaseRobot& attack1 = baseRobots[1];	// 蓝色 前锋
 	//attack1.keepYPushBall(-75, 80, footBallNow_X, footBallNow_Y);	// 1号机器人x不超过80的情况下追球（前锋）
@@ -431,7 +431,7 @@ void strategy_penalty(Field* field)
 			}
 			double futureBallx = 4 * footBallNow_X - 3 * footBallNow_X;
 			double futureBally = 4 * footBallNow_Y - 3 * footBallNow_Y;
-			baseRobots[0].moveTo(futureBallx, futureBally);	// 守门员预测球的位置，与球保持同一水平线
+			baseRobots[0].Move_Go(futureBallx, futureBally);	// 守门员预测球的位置，与球保持同一水平线
 		}
 		else
 		{

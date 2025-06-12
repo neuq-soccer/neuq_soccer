@@ -89,7 +89,7 @@ namespace Simuro {
 	//判罚类型，执行方，判罚原因
 	struct JudgeResultEvent {
 		JudgeType type;
-		Team actor;
+		Team actor;  //用来区分是对手还是队友的枚举
 		wchar_t reason[MAX_STRING_LEN];
 	};
 }
