@@ -304,7 +304,6 @@ void BaseRobot::Move_Go(double Tar_x, double Tar_y)
 	while (tar_angle < -185) tar_angle += 360;//限幅
 	double Tar_distance = sqrt(delta_x * delta_x + delta_y * delta_y);
 	double angle_diff = tar_angle - robot->rotation;
-	//double vel = Tar_distance * Kp;
 	pidCal(x_dis, Tar_distance, 0);
 	pidCal(sptr, robot->rotation, tar_angle);
 	double vel = -x_dis->total_out;
@@ -327,8 +326,8 @@ void BaseRobot::Move_Go(double Tar_x, double Tar_y)
 	}
 	else
 	{
-		speedl = -80;
-		speedr = 80;
+		speedl = 0;//看不到球就停住
+		speedr = 0;
 	}
 	Velocity(speedl, speedr);
 }
@@ -370,9 +369,9 @@ void BaseRobot::throwBall(double ballx, double bally)
 	else
 	{
 		if (bally < 0)
-			Velocity(125, -125);
+			Velocity(75, -75);
 		else
-			Velocity(-125, 125);
+			Velocity(-75, 75);
 	}
 }
 
@@ -476,26 +475,31 @@ void BaseRobot::breakThrough(BaseRobot oppRobots[5], double tarx, double tary)
 
 void BaseRobot::keepYPushBall(double keepY1, double keepY2, double footBallNow_X, double footBallNow_Y)
 {
+	// 如果机器人当前位置的横坐标小于keepY1，则将机器人移动到keepY1的位置
 	if (getPos().x < keepY1)
 	{
 		Move_Go(keepY1, footBallNow_Y);
 	}
 	else
 	{
+		// 如果机器人当前位置的横坐标大于keepY1，且机器人目标点的横坐标小于keepY1，则将机器人移动到keepY1的位置
 		if (footBallNow_X < keepY1)
 		{
 			Move_Go(keepY1, footBallNow_Y);	// 若机器人目标点横坐标超出给定范围则目标点y不变，目标点x变成keepY
 		}
 		else {
+			// 否则正常运行
 			Move_Go(footBallNow_X, footBallNow_Y);	// 否则正常运行
 		}
 	}
+	// 如果机器人当前位置的横坐标大于keepY2，则将机器人移动到keepY2的位置
 	if (getPos().x > keepY2)
 	{
 		Move_Go(keepY2, footBallNow_Y);	// 若机器人横坐标超出给定范围则y不变，x退回到keepY
 	}
 	else
 	{
+		// 如果机器人当前位置的横坐标小于keepY2，且机器人目标点的横坐标大于keepY2，则将机器人移动到keepY2的位置
 		if (footBallNow_X > keepY2)
 		{
 			Move_Go(keepY2, footBallNow_Y);	// 若机器人目标点横坐标超出给定范围则目标点y不变，目标点x变成keepY
